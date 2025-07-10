@@ -50,7 +50,7 @@ export class UserService {
 
   // Get all users
   getAllUsers() {
-    return this.http.get<{ users: any; status: string }>(this.userUrl);
+    return this.http.get<{ tab: any; status: string }>(this.userUrl);
   }
 
   // Get user by ID
@@ -65,11 +65,31 @@ export class UserService {
 
   // Delete user
   deleteUser(userId: string) {
-    return this.http.delete(`${this.userUrl}/${userId}`);
+    return this.http.delete<{ status: string }>(`${this.userUrl}/${userId}`);
   }
 
   // Admin: validate teacher account
   validateTeacher(userId: string) {
-    return this.http.put<{ msg: string }>(`${this.userUrl}/validate`, { userId });
+    return this.http.put<{ status: string }>(`${this.userUrl}/validate`, { userId });
+  }
+
+  sendJoinRequest(studentId: string, courseId: string) {
+    return this.http.post<{ status: string }>(`${this.userUrl}/join-request`, {
+      studentId,
+      courseId
+    });
+  }
+
+  acceptCourseRequest(studentId: string, courseId: string) {
+    return this.http.put<{ status: string }>(`${this.userUrl}/accept-course-request`,
+      { studentId, courseId }
+    );
+  }
+
+  getChildCourses(childPhone: number) {
+    return this.http.post<{ status: string, courses: any[] }>(
+      `${this.userUrl}/parents/child-courses`,
+      { childPhone }
+    );
   }
 }

@@ -1,9 +1,9 @@
 <div class="single-cat text-center">
-    <div class="cat-icon">
-        <img src="assets/img/gallery/team1.png" alt="">
+    <div class="cat-icon" (click)="displayTeacher(teacher._id)">
+        <img [src]="teacher.photo" alt="" style="width: 260px; height: 260px; border-radius: 100%;">
     </div>
     <div class="cat-cap">
-        <h5><a href="services.html">Mr. Urela</a></h5>
-        <p>The automated process all your website tasks.</p>
+        <h5 style="font-size: 32px;">{{teacher.firstName}} {{teacher.lastName}}</h5>
+        <p style="margin-top: 5px;">{{teacher.speciality}}</p>
     </div>
 </div>

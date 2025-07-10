@@ -1,0 +1,39 @@
+<app-banner [title]="'Find Your Childs Courses'"></app-banner>
+
+<div class="mb-3" style="font-size: 30px; text-align: center;">
+    <h5 style="font-size: 50px; margin-top: 10px; margin-bottom: 10px;">Child's Telephone:</h5>
+    <div>
+        <select [(ngModel)]="childPhone" class="mb-3"
+            style="width: 50%; padding: 11px 15px; margin: 0 auto; border-radius: 10px;">
+            <option *ngFor="let phone of childTelephones" [value]="phone">{{ phone }}</option>
+        </select>
+    </div>
+    <button class="btn btn-primary mt-2" (click)="searchChildCourses()" style="width: 50%;">Search</button>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div *ngIf="courses.length > 0">
+    <h4 style="font-size: 50px;
+    margin-top: 40px;
+    text-align: center;
+    margin-bottom: 30px;">Courses found:</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Teacher</th>
+                <th>Mark</th>
+                <th>Evaluation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let course of courses">
+                <td>{{ course.name }}</td>
+                <td>{{ course.teacherId.firstName }} {{ course.teacherId.lastName }}</td>
+                <td>{{ course.childMark ?? 'N/A' }}</td>
+                <td>{{ course.childEvaluation ?? 'N/A' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

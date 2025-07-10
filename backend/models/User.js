@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    telephone: Number,
     telephone: {
       type: Number,
       required: true,
@@ -42,6 +41,12 @@ const userSchema = new mongoose.Schema(
     success: { type: Boolean, default: false },
     photo: String,
     cv: String,
+    requestedCourseIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+      },
+    ],
   },
   {
     timestamps: true,

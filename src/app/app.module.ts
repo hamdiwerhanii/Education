@@ -26,6 +26,14 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { DashboardHomeComponent } from './components/dashboard-home/dashboard-home.component';
+import { CourseInfoComponent } from './components/course-info/course-info.component';
+import { DashboardAdminHomeComponent } from './components/dashboard-admin-home/dashboard-admin-home.component';
+import { DashboardAdminAddCourseComponent } from './components/dashboard-admin-add-course/dashboard-admin-add-course.component';
+import { CourseTableComponent } from './components/course-table/course-table.component';
+import { UserInfoComponent } from './components/user-info/user-info.component';
+import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
+import { ParentEvalChildComponent } from './components/parent-eval-child/parent-eval-child.component';
+import { FilterPipe } from './pipes/filter.pipe';
 
 
 
@@ -52,7 +60,15 @@ import { DashboardHomeComponent } from './components/dashboard-home/dashboard-ho
     TeacherComponent,
     TeacherDashboardComponent,
     AdminDashboardComponent,
-    DashboardHomeComponent
+    DashboardHomeComponent,
+    CourseInfoComponent,
+    DashboardAdminHomeComponent,
+    DashboardAdminAddCourseComponent,
+    CourseTableComponent,
+    UserInfoComponent,
+    StudentDashboardComponent,
+    ParentEvalChildComponent,
+    FilterPipe
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,12 @@
+<app-banner [title]="'User Info'"></app-banner>
+
+
+<div class="single-cat text-center">
+    <div class="cat-icon">
+        <img [src]="user.photo" style="width: 300px; margin-top: 20px; margin-bottom: 20px;">
+    </div>
+    <div class="cat-cap">
+        <h5><a href="services.html" style="font-size: 32px;">{{user.firstName}} {{user.lastName}}</a></h5>
+        <p style="font-size: 28px; font-weight: bold;">{{user.role}}</p>
+    </div>
+</div>

@@ -22,8 +22,13 @@
                                             <li><a routerLink="teachers">Teachers</a></li>
                                             <li *ngIf="user.role == 'admin'"><a routerLink="dashboardAdmin">Admin
                                                     Dashboard</a></li>
+                                            <li *ngIf="user.role == 'student'"><a routerLink="studentDashboard">Student
+                                                    Dashboard</a></li>
                                             <li *ngIf="user.role == 'teacher'"><a routerLink="teacherDashboard">Teacher
                                                     Dashboard</a></li>
+                                            <li *ngIf="user.role == 'parent'"><a routerLink="childsEvaluation">Childs
+                                                    Evaluation
+                                                </a></li>
                                             <li><a href="about.html">About</a></li>
                                             <li><a href="contact.html">Contact</a></li>
                                             <!-- Button -->

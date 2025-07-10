@@ -25,11 +25,19 @@ export class CourseService {
 
   // update course
   updateCourse(course: any) {
-    return this.httpClient.put<{ status: string }>(this.coursesUrl, course);
+    return this.httpClient.put<{ msg: string }>(this.coursesUrl, course);
   }
 
   // delete course
   deleteCourse(id: number) {
     return this.httpClient.delete<{ status: string }>(`${this.coursesUrl}/${id}`);
+  }
+
+  addGrade(courseId: string, studentId: string, grade: any) {
+    return this.httpClient.put(`${this.coursesUrl}/${courseId}/add-grade`, {
+      studentId,
+      mark: grade.mark,
+      evaluation: grade.evaluation
+    });
   }
 }

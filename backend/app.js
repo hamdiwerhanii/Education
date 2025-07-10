@@ -183,6 +183,8 @@ app.post("/api/users/login", (req, res) => {
   console.log("login", req.body);
   const user = req.body;
   User.findOne({ telephone: user.telephone }).then((find) => {
+    console.log("login", find);
+
     if (!find) {
       res.json({ status: "Check Your Phone" });
     } else {
@@ -197,6 +199,7 @@ app.post("/api/users/login", (req, res) => {
             role: find.role,
             success: find.success,
             _id: find._id,
+            childTelephones: find.childTelephones,
           };
           const token = jwt.sign(userToSend, secretKey, {
             expiresIn: "1h",
@@ -228,6 +231,47 @@ app.put("/api/users/validate", (req, res) => {
   });
 });
 
+// send request if role student
+app.post("/api/users/join-request", async (req, res) => {
+  const { studentId, courseId } = req.body;
+  try {
+    const user = await User.findById(studentId);
+    if (!user) return res.status(404).json({ status: "USER_NOT_FOUND" });
+
+    if (!user.requestedCourseIds.includes(courseId)) {
+      user.requestedCourseIds.push(courseId);
+      await user.save();
+      return res.json({ status: "REQUEST_ADDED" });
+    } else {
+      return res.json({ status: "ALREADY_REQUESTED" });
+    }
+  } catch (err) {
+    return res.status(500).json({ status: "ERROR", message: err.message });
+  }
+});
+
+// accept resquest if role admin
+app.put("/api/users/accept-course-request", async (req, res) => {
+  const { studentId, courseId } = req.body;
+  try {
+    // Ajouter au cours
+    await Course.updateOne(
+      { _id: courseId },
+      { $addToSet: { students: studentId } }
+    );
+
+    // Supprimer la demande
+    await User.updateOne(
+      { _id: studentId },
+      { $pull: { requestedCourseIds: courseId } }
+    );
+
+    res.json({ status: "ACCEPTED" });
+  } catch (err) {
+    res.status(500).json({ status: "ERROR", message: err.message });
+  }
+});
+
 app.get("/api/users/:id", (req, res) => {
   console.log("get user by id", req.params.id);
   User.findById(req.params.id).then((doc) => {
@@ -235,6 +279,20 @@ app.get("/api/users/:id", (req, res) => {
       res.json({ user: doc, status: "OK" });
     } else {
       res.json({ status: "No user found with id : " + req.params.id });
+    }
+  });
+});
+
+// Delete User
+app.delete("/api/users/:id", (req, res) => {
+  console.log("delete team", req.params.id);
+  const userId = req.params.id;
+  User.deleteOne({ _id: userId }).then((data) => {
+    console.log(data);
+    if (data.deletedCount == 1) {
+      res.json({ status: "DELETED" });
+    } else {
+      res.json({ status: "No User found with id : " + req.params.id });
     }
   });
 });
@@ -261,6 +319,114 @@ app.post("/api/courses", (req, res) => {
       });
     }
   });
+});
+
+// Get all courses
+app.get("/api/courses", (req, res) => {
+  console.log("get all courses");
+  Course.find()
+    .populate("teacherId")
+    .populate("students")
+    .then((C) => {
+      res.json({ tab: C, status: "OK" });
+    });
+});
+
+// get Course by id
+app.get("/api/courses/:id", (req, res) => {
+  console.log("get course by id", req.params.id);
+  Course.findById(req.params.id)
+    .populate("students")
+    .then((doc) => {
+      if (doc) {
+        res.json({ course: doc, status: "OK" });
+      } else {
+        res.json({ status: "No course found with id : " + req.params.id });
+      }
+    });
+});
+
+// update Course
+app.put("/api/courses", (req, res) => {
+  console.log("update Course", req.body);
+  let newCourse = req.body;
+  Course.updateOne({ _id: newCourse._id }, newCourse).then((updated) => {
+    console.log("Here update response", updated);
+    updated.nModified == 1
+      ? res.json({ msg: "Updated" })
+      : res.json({ msg: "not" });
+  });
+});
+
+// delete Course
+app.delete("/api/courses/:id", (req, res) => {
+  console.log("delete course", req.params.id);
+  const courseId = req.params.id;
+  // find Course to delete
+  Course.deleteOne({ _id: courseId }).then((data) => {
+    console.log(data);
+    if (data.deletedCount == 1) {
+      res.json({ status: "DELETED" });
+    } else {
+      res.json({ status: "No course found with id : " + req.params.id });
+    }
+  });
+});
+
+// add grade
+app.put("/api/courses/:id/add-grade", async (req, res) => {
+  const courseId = req.params.id;
+  const { studentId, mark, evaluation } = req.body;
+
+  try {
+    const course = await Course.findById(courseId);
+    if (!course) return res.status(404).json({ status: "COURSE_NOT_FOUND" });
+
+    // Supprimer ancienne note s’il en existe déjà une pour cet étudiant
+    course.grades = course.grades.filter(
+      (g) => g.studentId.toString() !== studentId
+    );
+
+    // Ajouter la nouvelle note
+    course.grades.push({ studentId, mark, evaluation });
+
+    await course.save();
+
+    res.json({ status: "GRADE_ADDED", course });
+  } catch (err) {
+    res.status(500).json({ status: "ERROR", message: err.message });
+  }
+});
+
+app.post("/api/users/parents/child-courses", async (req, res) => {
+  const { childPhone } = req.body;
+
+  try {
+    const child = await User.findOne({
+      telephone: childPhone,
+      role: "student",
+    });
+    if (!child) {
+      return res.status(404).json({ status: "CHILD_NOT_FOUND" });
+    }
+
+    const courses = await Course.find({ students: child._id })
+      .populate("teacherId", "firstName lastName") // juste le nom du prof
+      .lean();
+
+    // Ajouter la note et l’évaluation de ce student dans chaque course
+    courses.forEach((course) => {
+      const grade = course.grades.find(
+        (g) => g.studentId.toString() === child._id.toString()
+      );
+      course.childMark = grade?.mark || null;
+      course.childEvaluation = grade?.evaluation || null;
+    });
+
+    res.json({ status: "OK", courses });
+  } catch (error) {
+    res.status(500).json({ status: "ERROR", message: error.message });
+  }
 });
 
 module.exports = app;

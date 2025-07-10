@@ -1,4 +1,4 @@
-<div class="col-lg-4">
+<div class="col-lg-12">
     <div class="properties properties2 mb-30">
         <div class="properties__card">
             <div class="properties__img overlay1">
@@ -6,10 +6,13 @@
             </div>
             <div class="properties__caption">
                 <p>User Experience</p>
-                <h3><a href="#">Fundamental of UX for Application design</a></h3>
-                <p>The automated process all your website tasks. Discover tools and techniques to engage
-                    effectively with vulnerable children and young people.
+                <h3><a href="#">{{course.name}}</a></h3>
+                <p>{{course.description}}
                 </p>
+                <div>Duration: <span>{{course.duration}} Min
+                    </span></div>
+                <div>Teacher : <span>{{course.teacherId.firstName}}
+                    </span></div>
                 <div class="properties__footer d-flex justify-content-between align-items-center">
                     <div class="restaurant-name">
                         <div class="rating">
@@ -25,7 +28,7 @@
                         <span>$135</span>
                     </div>
                 </div>
-                <a href="#" class="border-btn border-btn2">Find out more</a>
+                <a class="border-btn border-btn2" (click)="displayCourse(course._id)">Find out more</a>
             </div>
         </div>
     </div>

@@ -9,6 +9,12 @@ import { LoginComponent } from './components/login/login.component';
 import { TeacherDashboardComponent } from './components/teacher-dashboard/teacher-dashboard.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { DashboardHomeComponent } from './components/dashboard-home/dashboard-home.component';
+import { CourseInfoComponent } from './components/course-info/course-info.component';
+import { EditCourseComponent } from './components/edit-course/edit-course.component';
+import { DashboardAdminHomeComponent } from './components/dashboard-admin-home/dashboard-admin-home.component';
+import { UserInfoComponent } from './components/user-info/user-info.component';
+import { StudentDashboardComponent } from './components/student-dashboard/student-dashboard.component';
+import { ParentEvalChildComponent } from './components/parent-eval-child/parent-eval-child.component';
 
 const routes: Routes = [
   { path: "", component: HomeComponent },
@@ -19,20 +25,25 @@ const routes: Routes = [
   { path: "signUpStudent", component: SignUpComponent },
   { path: "signUpParent", component: SignUpComponent },
   { path: "login", component: LoginComponent },
-
-  // ✅ Teacher Dashboard with nested routes
+  { path: "courseInfo/:id", component: CourseInfoComponent },
+  { path: "userInfo/:id", component: UserInfoComponent },
+  { path: "studentDashboard", component: StudentDashboardComponent },
+  { path: "childsEvaluation", component: ParentEvalChildComponent },
   {
     path: "teacherDashboard",
     component: TeacherDashboardComponent,
     children: [
       { path: "addCourse", component: AddCourseComponent },
       { path: "home", component: DashboardHomeComponent },
-      // Add more child routes here as needed
+      { path: "editCourse/:id", component: EditCourseComponent },
     ]
   },
-
-  // ✅ Admin Dashboard (no children in this example)
-  { path: "dashboardAdmin", component: AdminDashboardComponent },
+  {
+    path: "dashboardAdmin", component: AdminDashboardComponent, children: [
+      { path: "home", component: DashboardAdminHomeComponent },
+      { path: "editCourse/:id", component: EditCourseComponent },
+    ]
+  },
 ];
 
 
