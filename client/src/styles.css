@@ -1,0 +1,289 @@
+body {
+  overflow-x: hidden;
+}
+
+.row {
+  margin-right: -10px;
+  margin-left: -10px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 10px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background: #fff;
+  color: #7364ff;
+  font-weight: 700;
+}
+
+.skip-link:focus {
+  left: 10px;
+}
+
+main:focus {
+  outline: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #ff9f67;
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.site-section {
+  padding: 60px 0 100px;
+}
+
+.form-contact .form-control {
+  border: 1px solid #d7d9e3;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.form-contact .form-control[aria-invalid='true'] {
+  border-color: #dc3545;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #3a3a3a;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.field-error {
+  margin: 6px 0 0;
+  color: #c62828;
+  font-size: 14px;
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  color: #6c757d;
+  font-size: 13px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 0;
+  color: #6c757d;
+  font-size: 16px;
+}
+
+.status__spinner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid #e2dcff;
+  border-top-color: #7364ff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.alert-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 14px 18px;
+  border: 1px solid #f5c2c7;
+  border-radius: 8px;
+  background: #fdecee;
+  color: #842029;
+}
+
+.alert-box--success {
+  border-color: #badbcc;
+  background: #e8f6ee;
+  color: #0f5132;
+}
+
+.alert-box__retry {
+  padding: 6px 14px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.search-form {
+  display: flex;
+  gap: 12px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-form .form-control {
+  flex: 1;
+  height: 50px;
+}
+
+.mb-40 {
+  margin-bottom: 40px;
+}
+
+.results-count {
+  min-height: 24px;
+  margin-bottom: 20px;
+  color: #6c757d;
+  text-align: center;
+}
+
+.card-panel {
+  margin-bottom: 30px;
+  padding: 28px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(115, 100, 255, 0.08);
+}
+
+.card-panel__title {
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+@media (max-width: 575px) {
+  .card-panel {
+    padding: 18px;
+  }
+}
+
+.table-scroll {
+  position: relative;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #eceef5;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.data-table th {
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filters .form-control {
+  flex: 1 1 180px;
+  width: auto;
+  height: 42px;
+}
+
+.user-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.action-btn {
+  display: inline-block;
+  margin: 2px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.action-btn--primary {
+  background: #7364ff;
+}
+
+.action-btn--success {
+  background: #2e7d32;
+}
+
+.action-btn--danger {
+  background: #c62828;
+}
+
+.action-btn--neutral {
+  background: #546e7a;
+}
+
+.badge-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #eceafe;
+  color: #5a48e0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-pill--warning {
+  background: #fff3e0;
+  color: #b45309;
+}
+
+.badge-pill--success {
+  background: #e8f6ee;
+  color: #0f5132;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status__spinner {
+    animation: none;
+  }
+}

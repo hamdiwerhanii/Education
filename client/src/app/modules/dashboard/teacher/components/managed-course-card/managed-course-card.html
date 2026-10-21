@@ -1,0 +1,74 @@
+<article class="card-panel" [attr.aria-labelledby]="'course-' + course().id">
+  <header class="course-head">
+    <div>
+      <h2 class="card-panel__title" [id]="'course-' + course().id">
+        <a [routerLink]="['/courses', course().id]">{{ course().name }}</a>
+      </h2>
+      <p class="course-meta">{{ course().durationMinutes | duration }} · {{ course().studentCount }} {{ course().studentCount === 1 ? 'student' : 'students' }}</p>
+    </div>
+    <div class="actions">
+      <a class="action-btn action-btn--primary" [routerLink]="['/dashboard/courses', course().id, 'edit']">Edit<span class="sr-only"> {{ course().name }}</span></a>
+      <button type="button" class="action-btn action-btn--danger" (click)="deleted.emit()">Delete<span class="sr-only"> {{ course().name }}</span></button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <app-alert>{{ error() }}</app-alert>
+  }
+
+  @if (course().pendingStudents.length) {
+    <section class="course-block" [attr.aria-labelledby]="'requests-' + course().id">
+      <h3 class="course-block__title" [id]="'requests-' + course().id">Join requests</h3>
+      <ul class="people">
+        @for (student of course().pendingStudents; track student.id) {
+          <li class="person">
+            <span class="user-cell">
+              <app-avatar [person]="student" [size]="36" [decorative]="true" />
+              {{ student.firstName }} {{ student.lastName }}
+            </span>
+            <span class="actions">
+              <button type="button" class="action-btn action-btn--success" [disabled]="busyId() === student.id" (click)="decide(student, true)">Accept<span class="sr-only"> {{ student.firstName }}</span></button>
+              <button type="button" class="action-btn action-btn--danger" [disabled]="busyId() === student.id" (click)="decide(student, false)">Reject<span class="sr-only"> {{ student.firstName }}</span></button>
+            </span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section class="course-block" [attr.aria-labelledby]="'students-' + course().id">
+    <h3 class="course-block__title" [id]="'students-' + course().id">Students and grades</h3>
+    @if (course().students.length) {
+      <ul class="people">
+        @for (student of course().students; track student.id) {
+          <li class="person person--stacked">
+            <div class="person__row">
+              <span class="user-cell">
+                <app-avatar [person]="student" [size]="36" [decorative]="true" />
+                {{ student.firstName }} {{ student.lastName }}
+              </span>
+              <span class="grade">
+                @if (student.grade; as grade) {
+                  <strong>{{ grade.mark }}/20</strong>
+                  @if (grade.evaluation) {
+                    <small>{{ grade.evaluation }}</small>
+                  }
+                } @else {
+                  <small>Not graded yet</small>
+                }
+              </span>
+              <button type="button" class="action-btn action-btn--neutral" [attr.aria-expanded]="gradingId() === student.id" (click)="toggleGrading(student)">
+                {{ student.grade ? 'Edit grade' : 'Add grade' }}<span class="sr-only"> for {{ student.firstName }}</span>
+              </button>
+            </div>
+            @if (gradingId() === student.id) {
+              <app-grade-form [courseId]="course().id" [student]="student" (saved)="graded()" (cancelled)="gradingId.set(null)" />
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="field-hint">No students enrolled yet.</p>
+    }
+  </section>
+</article>

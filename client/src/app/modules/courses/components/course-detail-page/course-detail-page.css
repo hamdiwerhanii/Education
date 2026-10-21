@@ -1,0 +1,23 @@
+.course-teacher {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin: 10px 0 30px;
+  color: #3a3a3a;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.course-teacher small {
+  display: block;
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.course-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}

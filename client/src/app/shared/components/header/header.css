@@ -1,0 +1,94 @@
+.header-user__chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 39px 2px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.sticky-bar .header-user__chip {
+  padding: 20px 2px;
+}
+
+.header-user__photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+}
+
+.button-header button {
+  cursor: pointer;
+}
+
+.mobile-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px 10px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.mobile-toggle__bar {
+  display: block;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+.mobile-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  margin: 0 15px;
+  border-radius: 6px;
+  background: #c86fff;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+}
+
+.mobile-menu--open {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mobile-menu ul {
+  margin: 0;
+  padding: 8px 0;
+  list-style: none;
+}
+
+.mobile-menu a,
+.mobile-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.mobile-menu a.active,
+.mobile-menu a:hover,
+.mobile-menu button:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu {
+    transition: none;
+  }
+}

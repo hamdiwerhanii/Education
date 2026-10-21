@@ -1,0 +1,49 @@
+<app-page-banner title="Courses" />
+
+<div class="courses-area section-padding40 fix">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-xl-7 col-lg-8">
+        <div class="section-tittle text-center mb-40">
+          <h2>Our featured courses</h2>
+        </div>
+      </div>
+    </div>
+
+    <form class="form-contact search-form mb-40" role="search" (ngSubmit)="submit()">
+      <label for="course-search" class="sr-only">Search courses by name</label>
+      <input id="course-search" class="form-control" type="search" name="q" maxlength="100" placeholder="Search courses by name" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      <button type="submit" class="btn">Search</button>
+    </form>
+
+    @if (error()) {
+      <app-alert retryLabel="Try again" (retry)="retry()">{{ error() }}</app-alert>
+    }
+
+    <p class="results-count" aria-live="polite">
+      @if (!isLoading() || courses().length) {
+        {{ total() }} {{ total() === 1 ? 'course' : 'courses' }} found
+      }
+    </p>
+
+    @if (courses().length) {
+      <ul class="row list-unstyled">
+        @for (course of courses(); track course.id; let i = $index) {
+          <li class="col-lg-4 col-md-6">
+            <app-course-card [course]="course" [index]="i" />
+          </li>
+        }
+      </ul>
+    } @else if (!isLoading() && !error()) {
+      <app-empty-state>No courses match your search.</app-empty-state>
+    }
+
+    @if (isLoading()) {
+      <app-loading label="Loading courses…" />
+    } @else if (page() < totalPages()) {
+      <div class="section-tittle text-center mt-40">
+        <button type="button" class="border-btn" (click)="loadMore()">Load more</button>
+      </div>
+    }
+  </div>
+</div>

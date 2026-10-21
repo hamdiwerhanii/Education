@@ -1,0 +1,36 @@
+<app-dashboard-shell title="Admin dashboard" [nav]="nav">
+  @if (statsError()) {
+    <app-alert retryLabel="Try again" (retry)="loadStats()">{{ statsError() }}</app-alert>
+  }
+  @if (stats(); as s) {
+    <dl class="stats">
+      <div class="stat"><dt>Teachers</dt><dd>{{ s.teachers }}</dd></div>
+      <div class="stat stat--warning"><dt>Waiting for approval</dt><dd>{{ s.pendingTeachers }}</dd></div>
+      <div class="stat"><dt>Students</dt><dd>{{ s.students }}</dd></div>
+      <div class="stat"><dt>Parents</dt><dd>{{ s.parents }}</dd></div>
+      <div class="stat"><dt>Courses</dt><dd>{{ s.courses }}</dd></div>
+    </dl>
+  }
+
+  <div class="tabs" role="tablist" aria-label="Admin sections">
+    @for (tab of tabs; track tab.id) {
+      <button type="button" role="tab" class="tab" [id]="'tab-' + tab.id" [attr.aria-selected]="activeTab() === tab.id" [attr.aria-controls]="'panel-' + tab.id" [class.tab--active]="activeTab() === tab.id" (click)="activeTab.set(tab.id)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  <div class="card-panel" role="tabpanel" [id]="'panel-' + activeTab()" [attr.aria-labelledby]="'tab-' + activeTab()">
+    @switch (activeTab()) {
+      @case ('users') {
+        <app-users-table (changed)="loadStats()" />
+      }
+      @case ('requests') {
+        <app-requests-table />
+      }
+      @case ('courses') {
+        <app-courses-table (changed)="loadStats()" />
+      }
+    }
+  </div>
+</app-dashboard-shell>
