@@ -24,7 +24,7 @@
     "test:unit": "npm run test:unit --workspaces"
   },
   "devDependencies": {
-    "concurrently": "^9.2.5"
+    "concurrently": "^10.0.6"
   },
   "overrides": {
     "vite": "7.3.7",
