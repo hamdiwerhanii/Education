@@ -1,0 +1,92 @@
+<h2 class="card-panel__title">Users</h2>
+
+<form class="filters" role="search" (ngSubmit)="load()">
+  <label class="sr-only" for="users-search">Search users</label>
+  <input id="users-search" class="form-control" type="search" name="q" placeholder="Name, email or telephone" [ngModel]="filters().q" (ngModelChange)="filters.update(f => ({ ...f, q: $event }))" />
+  <label class="sr-only" for="users-role">Role</label>
+  <select id="users-role" class="form-control" name="role" [ngModel]="filters().role" (ngModelChange)="setFilter('role', $event)">
+    <option value="">All roles</option>
+    <option value="teacher">Teachers</option>
+    <option value="student">Students</option>
+    <option value="parent">Parents</option>
+  </select>
+  <label class="sr-only" for="users-status">Status</label>
+  <select id="users-status" class="form-control" name="status" [ngModel]="filters().status" (ngModelChange)="setFilter('status', $event)">
+    <option value="">Any status</option>
+    <option value="pending">Waiting for approval</option>
+    <option value="approved">Approved</option>
+  </select>
+  <button type="submit" class="action-btn action-btn--primary">Search</button>
+</form>
+
+@if (error()) {
+  <app-alert retryLabel="Reload" (retry)="load()">{{ error() }}</app-alert>
+}
+
+@if (users(); as list) {
+  @if (list.length) {
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th scope="col">User</th>
+            <th scope="col">Role</th>
+            <th scope="col">Contact</th>
+            <th scope="col">Joined</th>
+            <th scope="col">Status</th>
+            <th scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of list; track user.id) {
+            <tr>
+              <td>
+                <span class="user-cell">
+                  <app-avatar [person]="user" [size]="36" [decorative]="true" />
+                  {{ user.firstName }} {{ user.lastName }}
+                </span>
+              </td>
+              <td>
+                {{ roleLabel[user.role] }}
+                @if (user.speciality) {
+                  <br /><small>{{ user.speciality }}</small>
+                }
+                @if (user.role === 'parent') {
+                  <br /><small>{{ user.childCount }} {{ user.childCount === 1 ? 'child' : 'children' }}</small>
+                }
+              </td>
+              <td>{{ user.email }}<br /><small>{{ user.telephone }}</small></td>
+              <td>{{ user.createdAt | date: 'mediumDate' }}</td>
+              <td>
+                @if (user.isApproved) {
+                  <span class="badge-pill badge-pill--success">Approved</span>
+                } @else {
+                  <span class="badge-pill badge-pill--warning">Pending</span>
+                }
+              </td>
+              <td class="actions">
+                @if (!user.isApproved) {
+                  <button type="button" class="action-btn action-btn--success" [disabled]="busyId() === user.id" (click)="approve(user)">
+                    Approve<span class="sr-only"> {{ user.firstName }} {{ user.lastName }}</span>
+                  </button>
+                }
+                @if (user.hasCv) {
+                  <a class="action-btn action-btn--neutral" [href]="cvUrl(user)" download>
+                    CV<span class="sr-only"> of {{ user.firstName }} {{ user.lastName }}</span>
+                  </a>
+                }
+                <button type="button" class="action-btn action-btn--danger" [disabled]="busyId() === user.id" (click)="remove(user)">
+                  Delete<span class="sr-only"> {{ user.firstName }} {{ user.lastName }}</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <app-empty-state>No users match these filters.</app-empty-state>
+  }
+} @else if (!error()) {
+  <app-loading label="Loading users…" />
+}

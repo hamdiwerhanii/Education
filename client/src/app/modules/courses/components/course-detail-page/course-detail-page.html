@@ -1,0 +1,72 @@
+@if (notFound()) {
+  <app-not-found-page />
+} @else {
+  <app-page-banner title="Course info" />
+
+  @if (error()) {
+    <div class="container site-section">
+      <app-alert retryLabel="Try again" (retry)="load()">{{ error() }}</app-alert>
+    </div>
+  } @else if (detail(); as d) {
+    <section class="about-area3 fix" aria-labelledby="course-title">
+      <div class="support-wrapper align-items-center">
+        <div class="right-content3">
+          <div class="right-img">
+            <img src="assets/img/gallery/about3.png" alt="" />
+          </div>
+        </div>
+        <div class="left-content3">
+          <div class="section-tittle section-tittle2 mb-20">
+            <div class="front-text">
+              <h2 id="course-title">{{ d.course.name }}</h2>
+            </div>
+          </div>
+          <div class="single-features">
+            <div class="features-icon"><img src="assets/img/icon/right-icon.svg" alt="" /></div>
+            <div class="features-caption"><p>{{ d.course.description }}</p></div>
+          </div>
+          <div class="single-features">
+            <div class="features-icon"><img src="assets/img/icon/right-icon.svg" alt="" /></div>
+            <div class="features-caption"><p>Duration: {{ d.course.durationMinutes | duration }}</p></div>
+          </div>
+          <div class="single-features">
+            <div class="features-icon"><img src="assets/img/icon/right-icon.svg" alt="" /></div>
+            <div class="features-caption">
+              <p>{{ d.course.studentCount }} {{ d.course.studentCount === 1 ? 'student' : 'students' }} enrolled</p>
+            </div>
+          </div>
+
+          <a class="course-teacher" [routerLink]="['/teachers', d.course.teacher.id]">
+            <app-avatar [person]="d.course.teacher" [size]="56" [decorative]="true" />
+            <span>
+              <small>Teacher</small>
+              {{ d.course.teacher.firstName }} {{ d.course.teacher.lastName }}
+            </span>
+          </a>
+
+          <div class="course-actions" aria-live="polite">
+            @if (actionError()) {
+              <app-alert>{{ actionError() }}</app-alert>
+            }
+            @if (d.viewer.canManage) {
+              <a class="btn" [routerLink]="['/dashboard/courses', d.course.id, 'edit']">Edit course</a>
+            } @else if (d.viewer.isEnrolled) {
+              <span class="badge-pill badge-pill--success">You are enrolled in this course</span>
+            } @else if (d.viewer.isPending) {
+              <span class="badge-pill badge-pill--warning">Your request is pending</span>
+              <button type="button" class="border-btn" [disabled]="isWorking()" (click)="cancel()">Cancel request</button>
+            } @else if (auth.role() === 'student') {
+              <button type="button" class="btn" [disabled]="isWorking()" (click)="join()">
+                {{ isWorking() ? 'Sending…' : 'Ask to join' }}
+              </button>
+            } @else if (!auth.isLoggedIn()) {
+              <a class="btn" routerLink="/login" [queryParams]="{ returnUrl: '/courses/' + d.course.id }">Log in to join</a>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  } @else {
+    <app-loading label="Loading course…" />
+  }
+}

@@ -1,0 +1,34 @@
+<app-dashboard-shell [title]="isEdit() ? 'Edit course' : 'Add course'" [nav]="nav()">
+  <div class="card-panel">
+    @if (isLoading()) {
+      <app-loading label="Loading course…" />
+    } @else {
+      <form class="form-contact contact_form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        @if (formError()) {
+          <app-alert>{{ formError() }}</app-alert>
+        }
+        <div class="form-group">
+          <label class="form-label" for="course-name">Name</label>
+          <input id="course-name" class="form-control" formControlName="name" aria-describedby="course-name-error" [attr.aria-invalid]="invalid('name')" />
+          <app-field-error [control]="form.controls.name" id="course-name-error" [show]="submitted()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="course-description">Description</label>
+          <textarea id="course-description" class="form-control w-100" rows="6" formControlName="description" aria-describedby="course-description-error" [attr.aria-invalid]="invalid('description')"></textarea>
+          <app-field-error [control]="form.controls.description" id="course-description-error" [show]="submitted()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="course-duration">Duration (minutes)</label>
+          <input id="course-duration" class="form-control" type="number" min="1" max="10000" formControlName="durationMinutes" aria-describedby="course-duration-error" [attr.aria-invalid]="invalid('durationMinutes')" />
+          <app-field-error [control]="form.controls.durationMinutes" id="course-duration-error" [show]="submitted()" />
+        </div>
+        <div class="actions">
+          <button type="submit" class="button button-contactForm boxed-btn" [disabled]="isSaving() || form.disabled">
+            {{ isSaving() ? 'Saving…' : isEdit() ? 'Save changes' : 'Create course' }}
+          </button>
+          <button type="button" class="border-btn" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    }
+  </div>
+</app-dashboard-shell>

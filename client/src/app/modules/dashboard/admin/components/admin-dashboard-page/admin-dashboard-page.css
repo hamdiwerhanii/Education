@@ -1,0 +1,53 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.stat {
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(115, 100, 255, 0.08);
+}
+
+.stat dt {
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stat dd {
+  margin: 4px 0 0;
+  color: #7364ff;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.stat--warning dd {
+  color: #d97706;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 10px 18px;
+  border: 2px solid #e2dcff;
+  border-radius: 999px;
+  background: #fff;
+  color: #3a3a3a;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab--active {
+  border-color: #7364ff;
+  background: #7364ff;
+  color: #fff;
+}

@@ -1,163 +1,129 @@
-# Education
+# Education — School Management Platform
 
-A full-stack school management platform where admins, teachers, students and parents manage courses, enrolment requests and grades, each from their own space.
+A full-stack learning platform built with **MongoDB, Express, Angular and Node.js (MEAN)**. Teachers publish courses, students ask to join and receive marks with feedback, parents follow their children's results, and admins approve teachers and manage the platform.
 
-![Angular](https://img.shields.io/badge/Angular-14-DD0031?logo=angular&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-4.7-3178C6?logo=typescript&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-Express_4-339933?logo=node.js&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose_5-47A248?logo=mongodb&logoColor=white)
-![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?logo=bootstrap&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-20%2B-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose_9-47A248?logo=mongodb&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?logo=vitest&logoColor=white)
 
 ---
 
 ## Table of Contents
 
-- [Overview](#overview)
 - [Features](#features)
+- [Roles and Permissions](#roles-and-permissions)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
-- [Application Routes](#application-routes)
+- [Environment Variables](#environment-variables)
 - [API Reference](#api-reference)
-- [Data Models](#data-models)
-- [Project Status and Known Limitations](#project-status-and-known-limitations)
+- [Security](#security)
+- [Testing and Quality](#testing-and-quality)
+- [Production Build](#production-build)
 - [Roadmap](#roadmap)
-- [Contributing](#contributing)
 - [License](#license)
 - [Author](#author)
 
 ---
 
-## Overview
-
-**Education** is a MEAN-stack application (MongoDB, Express, Angular, Node.js) for running a small school or training centre online. It has four user roles, and each one gets its own workflow:
-
-| Role | What they can do |
-|------|------------------|
-| **Admin** | Manage every user, validate teacher accounts, accept students' course-join requests, delete users |
-| **Teacher** | Create, edit and delete their own courses, see enrolled students, and give each student a mark and a written evaluation |
-| **Student** | Browse courses, ask to join a course, and see their enrolled courses with their personal grade |
-| **Parent** | Link their children's phone numbers at sign-up and view each child's courses, marks and evaluations |
-
-The project covers the full stack: role-based sign-up with file uploads, JWT login, an approval workflow for teachers and for enrolments, relational data in MongoDB using `populate`, and a multi-dashboard Angular front end.
-
 ## Features
 
-### Authentication and accounts
-- Separate sign-up forms per role (`/signUpAdmin`, `/signUpTeacher`, `/signUpStudent`, `/signUpParent`) built from a single reactive-form component
-- Client-side validation: required fields, valid email, 8-digit phone number, and a **strong password** rule (8 to 20 characters with uppercase, lowercase, digit and special character) plus a password-confirmation match
-- Server-side **duplicate checks** on email and telephone, with field-specific error messages
-- Passwords hashed with **bcrypt** (12 salt rounds)
-- **Login with phone number and password**. The server returns a signed JWT (1-hour expiry), which is stored in `sessionStorage` and decoded on the client with `jwt-decode`
-- Redirect after login based on role, plus a navigation bar that changes with the role
-- **Teacher approval:** a teacher cannot log in until an admin validates the account. Admin accounts are approved automatically
+- **Public site**: home page with featured courses, subjects and teachers; searchable course and teacher lists with "load more"; course and teacher profile pages
+- **Accounts**: sign up as a student, teacher or parent with photo upload (and a PDF CV for teachers); log in with telephone and password
+- **Teacher approval**: new teachers stay pending until an admin approves them
+- **Enrolment**: students ask to join a course, and the course teacher or an admin accepts or rejects the request
+- **Grades**: teachers mark enrolled students out of 20 and leave written feedback
+- **Parents**: link their account to their children's student accounts and follow their courses and marks
+- **Admin dashboard**: statistics, user search and filters, teacher approval, CV download, enrolment requests and course management
+- **Responsive theme** based on the Colorlib education template, with a keyboard-friendly mobile menu
 
-### File uploads
-- Profile photo upload for every role, and CV upload (PDF) for teachers, handled by **Multer**
-- Accepted MIME types: PNG, JPEG/JPG, WEBP and PDF
-- Files are stored in `backend/files/photos` and `backend/files/cvs` and served statically at `/files/...`
+## Roles and Permissions
 
-### Courses
-- Teachers create courses (name, description, duration) from their dashboard
-- Public course catalogue and course detail page
-- Teacher dashboard lists only the logged-in teacher's courses, with edit and delete actions
-- Students can send a **join request** from a course detail page. The request stays pending until an admin accepts it
+Every rule below is enforced **by the API**, not only hidden in the interface.
 
-### Grades and evaluations
-- Teachers pick an enrolled student and record a numeric **mark** and a text **evaluation**. If the student already has a grade, the new one replaces it
-- Students see their grade for each enrolled course in the student dashboard
-- Parents enter a child's phone number and get that child's courses, teacher names, marks and evaluations. The lookup only works for phone numbers registered on the parent's account. At sign-up, each child phone number must belong to an existing student
+| Action | Visitor | Student | Parent | Teacher | Admin |
+| ------ | :-----: | :-----: | :----: | :-----: | :---: |
+| Browse courses and teachers | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Ask to join / cancel a request | | ✅ | | | |
+| See own courses and marks | | ✅ | | | |
+| See children's courses and marks | | | ✅ | | |
+| Create a course | | | | ✅ (approved) | |
+| Edit, delete, accept requests, grade | | | | own courses | all courses |
+| Approve teachers, delete users, read CVs | | | | | ✅ |
 
-### Admin dashboard
-- Users table showing every non-admin user, with **Validate** (pending teachers), **Delete**, user details, and **Accept** for students' pending course requests
-
-### Public site
-- Landing page with hero banner, about section, subjects, course list and teacher list
-- Teachers page with a custom `filter` pipe that searches teachers by speciality
-- SweetAlert2 dialogs for feedback (sign-up success, login, access denied, request sent)
+Admin accounts cannot be created from the website; they are created with a command (see [Getting Started](#getting-started)).
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|--------------|
-| Front end | Angular 14, TypeScript 4.7, RxJS 7, Angular Reactive and Template-driven Forms, Angular Router, HttpClient |
-| UI | Bootstrap 5, a bundled HTML education theme (jQuery plugins, Owl Carousel, Slick, Font Awesome, Themify and Flaticon icons), SweetAlert2 |
-| Back end | Node.js, Express 4, body-parser, express-session |
-| Database | MongoDB with Mongoose 5 |
-| Auth and security | jsonwebtoken (signing), jwt-decode (client), bcrypt (password hashing) |
-| File handling | Multer (disk storage) |
-| Testing scaffold | Karma and Jasmine (default Angular CLI spec files) |
+| Layer      | Technology |
+| ---------- | ---------- |
+| Front end  | **Angular 21** (standalone components, signals, zoneless change detection, new `@if` / `@for` control flow, reactive forms), Colorlib Bootstrap 4 theme (CSS only) |
+| API        | **Express 5**, Zod, jsonwebtoken, bcryptjs, Helmet, express-rate-limit, Multer, cookie-parser |
+| Database   | MongoDB with **Mongoose 9** |
+| Tooling    | npm workspaces, concurrently, ESLint 10 + angular-eslint |
+| Testing    | Vitest, Supertest, mongodb-memory-server, Angular TestBed, axe-core |
+| CI         | GitHub Actions, Dependabot |
 
 ## Architecture
 
 ```
-┌─────────────────────────┐   HTTP (JSON / multipart)   ┌──────────────────────────┐
-│ Angular 14 SPA          │ ──────────────────────────► │ Express API (port 4000)  │
-│ http://localhost:4200   │                             │ server.js → backend/app  │
-│ User & Course services  │ ◄────────────────────────── │ JWT · bcrypt · Multer    │
-└─────────────────────────┘        JWT in response      └────────────┬─────────────┘
-                                                                     │ Mongoose
-                                                        ┌────────────▼─────────────┐
-                                                        │ MongoDB  educationDB     │
-                                                        │ users · courses          │
-                                                        └──────────────────────────┘
+Browser ──► Angular dev server (:4200) ──► Angular app
+                │
+                └── /api, /uploads ──proxy──► Express API (:4000) ──► MongoDB
 ```
 
-The front end and back end are in the same repository and share one `package.json`. The Angular app calls the API through two services (`UserService`, `CourseService`), and both have `http://localhost:4000/api/...` hard-coded as the base URL.
+- In development the Angular dev server **proxies** API calls (`client/proxy.conf.json`), so the browser sees one origin and the session cookie works without CORS.
+- In production, Express serves the built Angular app from `client/dist`, so the platform deploys as **one Node.js service**.
+- The session is a signed **JWT in an `httpOnly` cookie**. Angular never reads the token; it asks `GET /api/auth/me` who is logged in, and visitors simply get `{ "user": null }`.
 
 ## Project Structure
 
 ```
 Education/
-├── server.js                      # Starts the Express API on port 4000
-├── backend/
-│   ├── app.js                     # Express app: middleware, Multer config, all API routes
-│   ├── models/
-│   │   ├── User.js                # User schema (admin / teacher / student / parent)
-│   │   └── Course.js              # Course schema with students[] and grades[]
-│   └── files/
-│       ├── photos/                # Uploaded profile pictures
-│       └── cvs/                   # Uploaded teacher CVs (PDF)
-├── src/
-│   ├── index.html
-│   ├── main.ts
-│   ├── environments/
-│   ├── assets/                    # Theme CSS/SCSS, JS plugins, fonts, images, login video
-│   └── app/
-│       ├── app.module.ts
-│       ├── app-routing.module.ts
-│       ├── services/
-│       │   ├── user.service.ts    # Sign-up, login, users, join requests, child courses
-│       │   └── course.service.ts  # Course CRUD and grading
-│       ├── pipes/
-│       │   └── filter.pipe.ts     # Filters teachers by speciality
-│       ├── validators/
-│       │   └── validatorPass.ts   # Strong-password and password-match validators
-│       └── components/
-│           ├── home/ banner-home/ banner/ about/ subjects/ header/ footer/
-│           ├── courses/ course/ course-info/ teachers/ teacher/
-│           ├── sign-up/ login/ user-info/
-│           ├── teacher-dashboard/ dashboard-home/ add-course/ edit-course/
-│           ├── admin-dashboard/ dashboard-admin-home/ users-table/ courses-table/
-│           ├── student-dashboard/
-│           └── parent-eval-child/
-├── angular.json
-├── karma.conf.js
-├── package.json
-└── tsconfig*.json
+├── .github/                          # CI workflow + Dependabot
+├── api/
+│   ├── __tests__/                    # Supertest + in-memory MongoDB tests
+│   ├── src/
+│   │   ├── config/env.js             # Environment variables validated with Zod
+│   │   ├── modules/
+│   │   │   ├── auth/                 # sign up, login, logout, me, JWT cookie
+│   │   │   ├── courses/              # model, schemas, service, controller, routes
+│   │   │   ├── teachers/             # public teacher list and profiles
+│   │   │   ├── me/                   # dashboards: my courses, my children
+│   │   │   ├── admin/                # users, approval, CVs, requests, stats
+│   │   │   ├── uploads/              # Multer config, file type and content checks
+│   │   │   └── users/                # user model and roles
+│   │   ├── shared/                   # middleware (auth, validate, errors) and utils
+│   │   ├── scripts/                  # seed data, seed, create-admin
+│   │   ├── app.js / server.js / demo.js
+│   └── .env.example
+├── client/
+│   ├── public/assets/                # theme CSS, fonts and images
+│   ├── src/
+│   │   ├── __tests__/                # unit, component and accessibility tests
+│   │   └── app/
+│   │       ├── modules/              # home, about, courses, teachers, auth, dashboard/*, not-found
+│   │       ├── shared/               # components, services, guards, models, pipes, constants, utils
+│   │       ├── app.routes.ts         # lazy-loaded routes with role guards
+│   │       └── app.config.ts
+│   ├── angular.json                  # dev proxy + security headers
+│   └── proxy.conf.json
+├── LICENSE
+└── package.json                      # workspaces + root scripts
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (an LTS version that works with Angular 14, for example Node 16 or 18) and npm
-- [Angular CLI 14](https://angular.io/cli): `npm install -g @angular/cli@14` (optional, because `npm start` uses the local CLI)
-- [MongoDB](https://www.mongodb.com/try/download/community) running locally on the default port `27017`
+- [Node.js](https://nodejs.org/) 20.19 or newer (24 LTS recommended)
+- [MongoDB](https://www.mongodb.com/try/download/community) running locally, **or** use demo mode
 
-### 1. Clone and install
+### Install
 
 ```bash
 git clone https://github.com/hamdiwerhanii/Education.git
@@ -165,182 +131,143 @@ cd Education
 npm install
 ```
 
-### 2. Configuration
-
-The project has no `.env` file. All configuration is hard-coded:
-
-| Setting | Location | Current value |
-|---------|----------|---------------|
-| MongoDB connection string | `backend/app.js` | `mongodb://127.0.0.1:27017/educationDB` |
-| JWT and session secret | `backend/app.js` (`secretKey`) | `your-secret-key` (placeholder; change it before any real use) |
-| API port | `server.js` | `4000` |
-| API base URL (front end) | `src/app/services/*.service.ts` | `http://localhost:4000/api/...` |
-| Uploaded-file base URL | `backend/app.js` | `http://localhost:4000/files/...` |
-
-MongoDB creates the `educationDB` database automatically the first time data is written.
-
-### 3. Run the back end
-
-Run this from the project root, because Multer upload paths are relative to the root:
+### Option A: demo mode (no setup)
 
 ```bash
-node server.js
+npm run dev:demo
 ```
 
-The API listens on `http://localhost:4000`.
+Starts the API with a temporary **in-memory MongoDB** filled with sample users and courses, plus the Angular app. Open http://localhost:4200 and log in with any of these accounts (password `Demo@1234`):
 
-### 4. Run the front end
+| Telephone  | Role    | Notes |
+| ---------- | ------- | ----- |
+| `10000000` | Admin   | Full dashboard |
+| `20000001` | Teacher | Owns two courses with students and a pending request |
+| `20000004` | Teacher | Waiting for approval (login is refused) |
+| `30000001` | Student | Enrolled in two courses, with marks |
+| `40000001` | Parent  | Parent of two students |
 
-In a second terminal:
+### Option B: with your own MongoDB
 
 ```bash
-npm start        # runs ng serve
+cp api/.env.example api/.env        # then set a long random JWT_SECRET
+npm run seed                        # optional: wipe the database and add the sample data
+npm run create-admin -- --first-name Amira --last-name Admin --email admin@school.tn --telephone 12345678 --password "Str0ng@Pass"
+npm run dev
 ```
 
-Open `http://localhost:4200`.
+### Scripts (from the repository root)
 
-### Available scripts
+| Command | Description |
+| ------- | ----------- |
+| `npm run dev` | API (:4000, auto-restart) + Angular app (:4200) |
+| `npm run dev:demo` | Same, with an in-memory database and sample data |
+| `npm run seed` | Reset the database in `MONGODB_URI` to the sample data |
+| `npm run create-admin -- ...` | Create an admin account |
+| `npm run lint` | ESLint in both workspaces |
+| `npm run test:unit` | API and client tests |
+| `npm run build` | Production build of the Angular app |
+| `npm start` | Start the API (serves the built app when `NODE_ENV=production`) |
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `npm start` | `ng serve` | Starts the Angular dev server |
-| `npm run build` | `ng build` | Builds the front end into `dist/` |
-| `npm run watch` | `ng build --watch --configuration development` | Rebuilds the front end whenever files change |
-| `npm test` | `ng test` | Runs the Karma/Jasmine unit tests (default CLI-generated specs only) |
+## Environment Variables
 
-The back end has no npm script. Start it with `node server.js`.
+**`api/.env`** (see `api/.env.example`)
 
-### First steps after launch
-
-1. Go to `/signUpAdmin` and create an admin account. Admins are approved automatically.
-2. Register a teacher at `/signUpTeacher`, then log in as the admin and **validate** that teacher in the admin dashboard.
-3. Log in as the teacher and create courses under **Teacher Dashboard → Add Course**.
-4. Register a student at `/signUpStudent`, open a course and send a join request. Then accept it as the admin.
-5. As the teacher, grade the student. Register a parent at `/signUpParent` using the student's phone number to follow that student's results.
-
-## Application Routes
-
-| Path | Component | Description |
-|------|-----------|-------------|
-| `/` | `HomeComponent` | Landing page (banner, about, subjects, courses, teachers) |
-| `/courses` | `CoursesComponent` | Course catalogue |
-| `/courseInfo/:id` | `CourseInfoComponent` | Course details and the join-request button |
-| `/teachers` | `TeachersComponent` | Teacher list with search by speciality |
-| `/signUpAdmin`, `/signUpTeacher`, `/signUpStudent`, `/signUpParent` | `SignUpComponent` | Sign-up form for each role |
-| `/login` | `LoginComponent` | Phone and password login |
-| `/userInfo/:id` | `UserInfoComponent` | User profile details |
-| `/studentDashboard` | `StudentDashboardComponent` | Enrolled courses and personal grades |
-| `/childsEvaluation` | `ParentEvalChildComponent` | Parent view of a child's courses and grades |
-| `/teacherDashboard/home` | `DashboardHomeComponent` | Teacher's courses, students and grading |
-| `/teacherDashboard/addCourse` | `AddCourseComponent` | Create a course |
-| `/teacherDashboard/editCourse/:id` | `EditCourseComponent` | Edit a course |
-| `/dashboardAdmin/home` | `DashboardAdminHomeComponent` | Admin users/courses tabs |
-| `/dashboardAdmin/editCourse/:id` | `EditCourseComponent` | Edit a course (admin) |
+| Variable | Description | Default |
+| -------- | ----------- | ------- |
+| `NODE_ENV` | `development`, `test` or `production` | `development` |
+| `PORT` | API port | `4000` |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://127.0.0.1:27017/education` |
+| `JWT_SECRET` | Secret that signs session tokens, **at least 32 characters** | required |
+| `JWT_EXPIRES_IN` | Session lifetime | `7d` |
+| `CLIENT_URL` | Public URL of the site | `http://localhost:4200` |
+| `AUTH_RATE_LIMIT_MAX` | Failed logins, and sign-ups, allowed per IP every 15 minutes | `10` |
+| `UPLOADS_DIR` | Where photos and CVs are stored | `api/uploads` |
 
 ## API Reference
 
-Base URL: `http://localhost:4000`
+Errors always have the shape `{ "error": { "message": "...", "details": { "field": ["..."] } } }`.
 
-None of the endpoints check the JWT on the server. "Intended role" shows which role uses each endpoint in the UI. It is not enforced.
+### Auth — `/api/auth`
 
-### Users
+| Method | Path | Access | Description |
+| ------ | ---- | ------ | ----------- |
+| POST | `/signup` | Public | Multipart form: `role` (student, teacher or parent), names, `email`, `telephone`, `password`, optional `photo`, teacher `speciality` and `cv`, parent `childTelephones` |
+| POST | `/login` | Public | `telephone`, `password` |
+| POST | `/logout` | Public | Clears the session cookie |
+| GET | `/me` | Logged in | Current user |
 
-| Method | Path | Description | Intended role |
-|--------|------|-------------|---------------|
-| `POST` | `/api/users` | Sign up (multipart: user fields plus optional `img` and `cv` files; `childTelephones` as a JSON array for parents) | Public |
-| `POST` | `/api/users/login` | Log in with `{ telephone, password }` and get `{ status, user: <JWT> }` back | Public |
-| `GET` | `/api/users` | List all users | Admin, public pages |
-| `GET` | `/api/users/:id` | Get one user | Any |
-| `DELETE` | `/api/users/:id` | Delete a user | Admin |
-| `PUT` | `/api/users/validate` | Validate a teacher account `{ userId }` | Admin |
-| `POST` | `/api/users/join-request` | Request to join a course `{ studentId, courseId }` | Student |
-| `PUT` | `/api/users/accept-course-request` | Accept a join request `{ studentId, courseId }` | Admin |
-| `POST` | `/api/users/parents/child-courses` | Get a child's courses with mark and evaluation `{ childPhone }` | Parent |
+### Courses — `/api/courses`
 
-### Courses
+| Method | Path | Access | Description |
+| ------ | ---- | ------ | ----------- |
+| GET | `/` | Public | `page`, `limit` (max 30), `q` |
+| GET | `/:id` | Public | Course + `viewer` status; owners and admins also get students, grades and requests |
+| POST | `/` | Approved teacher | `name`, `description`, `durationMinutes` |
+| PATCH | `/:id` | Owner / admin | Update any field |
+| DELETE | `/:id` | Owner / admin | Delete |
+| POST / DELETE | `/:id/join` | Student | Ask to join / cancel the request |
+| POST | `/:id/requests/:studentId/accept` | Owner / admin | Accept a request |
+| POST | `/:id/requests/:studentId/reject` | Owner / admin | Reject a request |
+| PUT | `/:id/grades/:studentId` | Owner / admin | `mark` (0–20), `evaluation` |
 
-| Method | Path | Description | Intended role |
-|--------|------|-------------|---------------|
-| `GET` | `/api/courses` | List all courses (teacher and students populated) | Any |
-| `GET` | `/api/courses/:id` | Get one course (students populated) | Any |
-| `POST` | `/api/courses` | Create a course `{ name, description, duration, teacherId }` | Teacher |
-| `PUT` | `/api/courses` | Update a course (body must include `_id`) | Teacher, Admin |
-| `DELETE` | `/api/courses/:id` | Delete a course | Teacher |
-| `PUT` | `/api/courses/:id/add-grade` | Add or replace a student's grade `{ studentId, mark, evaluation }` | Teacher |
+### Other
 
-### Static files
+| Method | Path | Access | Description |
+| ------ | ---- | ------ | ----------- |
+| GET | `/api/teachers`, `/api/teachers/:id` | Public | Approved teachers and their courses |
+| GET | `/api/me/courses` | Teacher / student | Own courses (teachers) or enrolments, marks and pending requests (students) |
+| GET | `/api/me/children` | Parent | Children with their courses and marks |
+| GET | `/api/admin/stats`, `/api/admin/users`, `/api/admin/requests` | Admin | Statistics, users (`role`, `status`, `q` filters), pending requests |
+| POST | `/api/admin/users/:id/approve` | Admin | Approve a teacher |
+| DELETE | `/api/admin/users/:id` | Admin | Delete a user (a teacher's courses are deleted too) |
+| GET | `/api/admin/users/:id/cv` | Admin | Download a teacher's CV |
+| GET | `/api/health` | Public | `{ "status": "ok" }` |
 
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/files/photos/<file>` | Uploaded profile photos |
-| `GET` | `/files/cvs/<file>` | Uploaded teacher CVs |
+## Security
 
-## Data Models
+- **No public admin sign-up**: admins are created only with `npm run create-admin`.
+- **Authorization on every route**: the API checks the session and the role (and course ownership) before every change.
+- **Passwords** are hashed with bcrypt (12 rounds) and never returned; login takes the same time and returns the same message for an unknown telephone or a wrong password.
+- **Sessions** use a signed JWT in an `httpOnly`, `SameSite=Lax` cookie (`Secure` in production).
+- **Validation** of every body and query string with Zod; unknown fields are ignored.
+- **Uploads**: only PNG, JPG and WEBP photos (2 MB) and PDF CVs (5 MB), checked by MIME type **and** file signature, stored under random names. CVs are private and served only to admins.
+- **Privacy**: public pages show teachers' names, specialities and photos only; course pages show student counts, not student details.
+- **Rate limiting** on failed logins and on sign-ups, **Helmet** security headers on the API, and the same headers on the Angular dev server.
 
-**User** (`backend/models/User.js`)
+## Testing and Quality
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `firstName`, `lastName` | String | Required |
-| `email` | String | Required, unique |
-| `password` | String | Required, bcrypt hash |
-| `telephone` | Number | Required, unique; used as the login identifier |
-| `role` | String | `admin` · `teacher` · `student` · `parent` |
-| `address`, `speciality` | String | `speciality` is used for teachers |
-| `childTelephones` | [Number] | Required for parents |
-| `success` | Boolean | Account validated; defaults to `false` |
-| `photo`, `cv` | String | URLs of uploaded files |
-| `requestedCourseIds` | [ObjectId → Course] | Pending join requests |
-| `createdAt`, `updatedAt` | Date | Mongoose timestamps |
+| Workspace | What the tests cover |
+| --------- | -------------------- |
+| `api` | Sign-up per role (admin refused, teacher pending, parent linked to children), strong passwords, upload content checks, login, sessions, course permissions, the request → accept → grade flow, mark limits, parent privacy, admin actions and cascades, CV access, security headers |
+| `client` | Validators, API error handling, route guards, header and mobile menu, login and sign-up forms, and an axe-core accessibility scan of the header, footer, forms and 404 page |
 
-**Course** (`backend/models/Course.js`)
+```bash
+npm run test:unit
+```
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `name`, `description`, `duration` | String | Required |
-| `teacherId` | ObjectId → User | Required |
-| `students` | [ObjectId → User] | Enrolled students |
-| `grades` | [{ `studentId`, `mark`, `evaluation` }] | One entry per student |
+The CI workflow runs lint, all tests and the production build on every push to `main` and every pull request. Dependabot opens weekly update pull requests.
 
-## Project Status and Known Limitations
+## Production Build
 
-This is a learning and portfolio project. The main workflows work end to end, but some parts are unfinished:
+```bash
+npm run build
+NODE_ENV=production npm start     # or set NODE_ENV=production in api/.env
+```
 
-- **No server-side authorization.** The API does not verify the JWT, so the role restrictions exist only in the UI.
-- **Hard-coded configuration.** The JWT secret, database URI, ports and URLs are written into the code instead of being read from environment variables.
-- **Placeholder components:** `courses-table` (the admin "Courses" tab), `course-table` and `dashboard-admin-add-course` are still generated stubs.
-- `UserService.updateUser()` calls `PUT /api/users/:id`, but the back end has no such endpoint.
-- In the users table, the Validate action checks for the status `"OK "` (with a trailing space), so the list does not refresh after a teacher is validated. Reloading the page shows the new state.
-- After a teacher deletes a course, the dashboard reloads **all** courses instead of only that teacher's courses.
-- The admin users table can only accept a student's **first** pending course request.
-- Sample uploaded files are committed under `backend/files/`.
-- Unit tests are the default Angular CLI specs. No real test suite has been written.
+Express then serves the Angular app, the API and uploaded photos from the same port. Set `MONGODB_URI`, `CLIENT_URL` and a strong `JWT_SECRET` on the server.
 
 ## Roadmap
 
-- [ ] Add JWT-verification and role-based authorization middleware to the Express API
-- [ ] Move secrets and URLs to environment variables (`.env` on the back end, Angular `environment.ts` on the front end)
-- [ ] Add Angular route guards for the role dashboards
-- [ ] Finish the admin courses table and a profile-editing endpoint
-- [ ] Split the back-end routes into separate router and controller modules
-- [ ] Add an npm script (e.g. with `concurrently`) to start the API and the client together
-- [ ] Write meaningful unit and API tests
-
-## Contributing
-
-Contributions, issues and suggestions are welcome. To contribute:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/my-feature`)
-3. Commit your changes (`git commit -m "Add my feature"`)
-4. Push the branch (`git push origin feature/my-feature`)
-5. Open a Pull Request
+- Email notifications when a teacher is approved or a request is accepted
+- Profile editing and password change
+- Course images uploaded by teachers
+- Deploy and add a live demo link
 
 ## License
 
-No license file is currently included; all rights reserved by the author.
+Code released under the [MIT License](LICENSE). The visual theme is based on a [Colorlib](https://colorlib.com) template licensed under CC BY 3.0, which requires the credit link kept in the footer.
 
 ## Author
 
-**Hamdi Werhani**
-GitHub: [@hamdiwerhanii](https://github.com/hamdiwerhanii)
+**Hamdi Werhani** — GitHub [@hamdiwerhanii](https://github.com/hamdiwerhanii)

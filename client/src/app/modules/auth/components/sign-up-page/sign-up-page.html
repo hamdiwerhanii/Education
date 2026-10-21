@@ -1,0 +1,114 @@
+<app-page-banner title="Sign Up" />
+
+<div class="site-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-10">
+        <nav class="role-tabs" aria-label="Account type">
+          @for (item of roles; track item.role) {
+            <a [routerLink]="['/sign-up', item.role]" class="role-tab" [class.role-tab--active]="item.role === activeRole()" [attr.aria-current]="item.role === activeRole() ? 'page' : null">
+              <strong>{{ item.label }}</strong>
+              <span>{{ item.hint }}</span>
+            </a>
+          }
+        </nav>
+
+        @if (pendingMessage()) {
+          <app-alert tone="success">{{ pendingMessage() }}</app-alert>
+        }
+        @if (formError()) {
+          <app-alert>{{ formError() }}</app-alert>
+        }
+
+        <form class="form-contact contact_form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <div class="row">
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-first">First name</label>
+              <input id="su-first" class="form-control" autocomplete="given-name" formControlName="firstName" aria-describedby="su-first-error" [attr.aria-invalid]="invalid('firstName')" />
+              <app-field-error [control]="form.controls.firstName" id="su-first-error" [show]="submitted()" />
+            </div>
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-last">Last name</label>
+              <input id="su-last" class="form-control" autocomplete="family-name" formControlName="lastName" aria-describedby="su-last-error" [attr.aria-invalid]="invalid('lastName')" />
+              <app-field-error [control]="form.controls.lastName" id="su-last-error" [show]="submitted()" />
+            </div>
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-email">Email</label>
+              <input id="su-email" class="form-control" type="email" autocomplete="email" formControlName="email" aria-describedby="su-email-error" [attr.aria-invalid]="invalid('email')" />
+              <app-field-error [control]="form.controls.email" id="su-email-error" [show]="submitted()" />
+            </div>
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-phone">Telephone (used to log in)</label>
+              <input id="su-phone" class="form-control" type="tel" inputmode="numeric" autocomplete="tel" formControlName="telephone" placeholder="8 digits" aria-describedby="su-phone-error" [attr.aria-invalid]="invalid('telephone')" />
+              <app-field-error [control]="form.controls.telephone" id="su-phone-error" [show]="submitted()" [messages]="messages.phone" />
+            </div>
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-password">Password</label>
+              <input id="su-password" class="form-control" type="password" autocomplete="new-password" formControlName="password" aria-describedby="su-password-hint su-password-error" [attr.aria-invalid]="invalid('password')" />
+              <p class="field-hint" id="su-password-hint">8+ characters with upper and lower case, a number and a symbol.</p>
+              <app-field-error [control]="form.controls.password" id="su-password-error" [show]="submitted()" [messages]="messages.password" />
+            </div>
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-confirm">Confirm password</label>
+              <input id="su-confirm" class="form-control" type="password" autocomplete="new-password" formControlName="confirmPassword" aria-describedby="su-confirm-error" [attr.aria-invalid]="invalid('confirmPassword')" />
+              <app-field-error [control]="form.controls.confirmPassword" id="su-confirm-error" [show]="submitted()" [messages]="messages.confirm" />
+            </div>
+            <div class="col-12 form-group">
+              <label class="form-label" for="su-address">Address (optional)</label>
+              <input id="su-address" class="form-control" autocomplete="street-address" formControlName="address" />
+            </div>
+
+            @if (activeRole() === 'teacher') {
+              <div class="col-12 form-group">
+                <label class="form-label" for="su-speciality">Speciality</label>
+                <input id="su-speciality" class="form-control" formControlName="speciality" placeholder="e.g. Mathematics" aria-describedby="su-speciality-error" [attr.aria-invalid]="invalid('speciality')" />
+                <app-field-error [control]="form.controls.speciality" id="su-speciality-error" [show]="submitted()" />
+              </div>
+            }
+
+            @if (activeRole() === 'parent') {
+              <fieldset class="col-12 form-group" formArrayName="childTelephones">
+                <legend class="form-label">Your children's telephones</legend>
+                <p class="field-hint">Each number must belong to an existing student account.</p>
+                @for (control of childTelephones.controls; track control; let i = $index) {
+                  <div class="child-row">
+                    <label class="sr-only" [for]="'su-child-' + i">Child {{ i + 1 }} telephone</label>
+                    <input [id]="'su-child-' + i" class="form-control" type="tel" inputmode="numeric" [formControlName]="i" placeholder="8 digits" [attr.aria-describedby]="'su-child-error-' + i" />
+                    @if (childTelephones.length > 1) {
+                      <button type="button" class="action-btn action-btn--danger" (click)="removeChild(i)" [attr.aria-label]="'Remove child ' + (i + 1)">Remove</button>
+                    }
+                  </div>
+                  <app-field-error [control]="control" [id]="'su-child-error-' + i" [show]="submitted()" [messages]="messages.phone" />
+                }
+                @if (childTelephones.length < maxChildren) {
+                  <button type="button" class="action-btn action-btn--primary mt-10" (click)="addChild()">+ Add another child</button>
+                }
+                <app-field-error [control]="childTelephones" id="su-children-error" [show]="submitted()" />
+              </fieldset>
+            }
+
+            <div class="col-sm-6 form-group">
+              <label class="form-label" for="su-photo">Profile photo (optional)</label>
+              <input id="su-photo" class="form-control file-input" type="file" accept="image/png,image/jpeg,image/webp" (change)="onFile($event, 'photo')" />
+              <p class="field-hint">PNG, JPG or WEBP, up to 2 MB.</p>
+            </div>
+            @if (activeRole() === 'teacher') {
+              <div class="col-sm-6 form-group">
+                <label class="form-label" for="su-cv">CV (optional)</label>
+                <input id="su-cv" class="form-control file-input" type="file" accept="application/pdf" (change)="onFile($event, 'cv')" />
+                <p class="field-hint">PDF, up to 5 MB. Only admins can see it.</p>
+              </div>
+            }
+          </div>
+
+          <div class="form-group mt-3">
+            <button type="submit" class="button button-contactForm boxed-btn mx-auto d-block w-100" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Creating account…' : 'Sign Up' }}
+            </button>
+          </div>
+          <p class="text-center">Already have an account? <a routerLink="/login">Log in</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

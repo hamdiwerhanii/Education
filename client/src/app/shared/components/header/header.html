@@ -1,0 +1,84 @@
+<header>
+  <div class="header-area header-transparent">
+    <div class="main-header">
+      <div class="header-bottom header-sticky" [class.sticky-bar]="isSticky()">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-xl-2 col-lg-2 col-8">
+              <div class="site-logo">
+                <a routerLink="/" aria-label="Education home">
+                  <img src="assets/img/logo/logo.png" alt="Education" width="150" height="30" />
+                </a>
+              </div>
+            </div>
+            <div class="col-xl-10 col-lg-10 col-4">
+              <div class="menu-wrapper d-flex align-items-center justify-content-end">
+                <div class="main-menu d-none d-lg-block">
+                  <nav aria-label="Main">
+                    <ul id="navigation">
+                      @for (item of nav; track item.path) {
+                        <li routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }">
+                          <a [routerLink]="item.path">{{ item.label }}</a>
+                        </li>
+                      }
+                      @if (auth.user(); as user) {
+                        <li routerLinkActive="active">
+                          <a [routerLink]="auth.homePath()">Dashboard</a>
+                        </li>
+                        <li class="header-user">
+                          <span class="header-user__chip">
+                            @if (user.photoUrl) {
+                              <img [src]="user.photoUrl" alt="" width="40" height="40" class="header-user__photo" />
+                            }
+                            <span>{{ user.firstName }} <small>({{ roleLabel() }})</small></span>
+                          </span>
+                        </li>
+                        <li class="button-header">
+                          <button type="button" class="btn btn3" (click)="logout()">Log out</button>
+                        </li>
+                      } @else {
+                        <li class="button-header margin-left">
+                          <a routerLink="/sign-up/student" class="btn">Sign Up</a>
+                        </li>
+                        <li class="button-header">
+                          <a routerLink="/login" class="btn btn3">Log in</a>
+                        </li>
+                      }
+                    </ul>
+                  </nav>
+                </div>
+                <button
+                  type="button"
+                  class="mobile-toggle d-lg-none"
+                  [attr.aria-expanded]="isMenuOpen()"
+                  aria-controls="mobile-menu"
+                  [attr.aria-label]="isMenuOpen() ? 'Close menu' : 'Open menu'"
+                  (click)="toggleMenu()"
+                >
+                  <span aria-hidden="true" class="mobile-toggle__bar"></span>
+                  <span aria-hidden="true" class="mobile-toggle__bar"></span>
+                  <span aria-hidden="true" class="mobile-toggle__bar"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav id="mobile-menu" class="mobile-menu d-lg-none" aria-label="Mobile" [class.mobile-menu--open]="isMenuOpen()" [attr.inert]="isMenuOpen() ? null : ''">
+          <ul>
+            @for (item of nav; track item.path) {
+              <li><a [routerLink]="item.path" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: !!item.exact }">{{ item.label }}</a></li>
+            }
+            @if (auth.isLoggedIn()) {
+              <li><a [routerLink]="auth.homePath()" routerLinkActive="active">Dashboard</a></li>
+              <li><button type="button" (click)="logout()">Log out</button></li>
+            } @else {
+              <li><a routerLink="/sign-up/student">Sign Up</a></li>
+              <li><a routerLink="/login">Log in</a></li>
+            }
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>

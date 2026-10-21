@@ -1,0 +1,31 @@
+<app-page-banner title="Login" />
+
+<div class="site-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <form class="form-contact contact_form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          @if (formError()) {
+            <app-alert>{{ formError() }}</app-alert>
+          }
+          <div class="form-group">
+            <label class="form-label" for="login-telephone">Telephone</label>
+            <input id="login-telephone" class="form-control" type="tel" inputmode="numeric" autocomplete="tel" formControlName="telephone" placeholder="8 digits" aria-describedby="login-telephone-error" [attr.aria-invalid]="(submitted() || form.controls.telephone.touched) && form.controls.telephone.invalid" />
+            <app-field-error [control]="form.controls.telephone" id="login-telephone-error" [show]="submitted()" [messages]="phoneMessages" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input id="login-password" class="form-control" type="password" autocomplete="current-password" formControlName="password" aria-describedby="login-password-error" [attr.aria-invalid]="(submitted() || form.controls.password.touched) && form.controls.password.invalid" />
+            <app-field-error [control]="form.controls.password" id="login-password-error" [show]="submitted()" />
+          </div>
+          <div class="form-group mt-3">
+            <button type="submit" class="button button-contactForm boxed-btn mx-auto d-block w-100" [disabled]="isSubmitting()">
+              {{ isSubmitting() ? 'Logging in…' : 'Login' }}
+            </button>
+          </div>
+          <p class="text-center">No account yet? <a routerLink="/sign-up/student">Sign up</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
