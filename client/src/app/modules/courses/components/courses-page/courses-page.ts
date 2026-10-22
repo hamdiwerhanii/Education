@@ -41,6 +41,11 @@ export class CoursesPage {
     this.router.navigate([], { queryParams: { q: this.search().trim() || null } });
   }
 
+  protected clearSearch(): void {
+    this.search.set('');
+    this.submit();
+  }
+
   protected loadMore(): void {
     this.fetch(this.page() + 1, this.q());
   }

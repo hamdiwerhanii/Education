@@ -30,4 +30,4 @@ export const SUBJECTS = [
   { id: 'mathematics', label: 'Mathematics', image: 'assets/img/gallery/topic8.png' },
 ];
 
-export const HOME_LIMITS = { courses: 6, teachers: 4 };
+export const HOME_LIMITS = { courses: 3, teachers: 4 };

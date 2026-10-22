@@ -32,7 +32,7 @@ const ALL_COURSES_LIMIT = 30;
             <tbody>
               @for (course of list; track course.id) {
                 <tr>
-                  <td><a [routerLink]="['/courses', course.id]">{{ course.name }}</a></td>
+                  <td><a class="text-link" [routerLink]="['/courses', course.id]">{{ course.name }}</a></td>
                   <td>{{ course.teacher.firstName }} {{ course.teacher.lastName }}</td>
                   <td>{{ course.durationMinutes | duration }}</td>
                   <td>{{ course.studentCount }}</td>

@@ -2,7 +2,7 @@
   <header class="course-head">
     <div>
       <h2 class="card-panel__title" [id]="'course-' + course().id">
-        <a [routerLink]="['/courses', course().id]">{{ course().name }}</a>
+        <a class="text-link" [routerLink]="['/courses', course().id]">{{ course().name }}</a>
       </h2>
       <p class="course-meta">{{ course().durationMinutes | duration }} · {{ course().studentCount }} {{ course().studentCount === 1 ? 'student' : 'students' }}</p>
     </div>

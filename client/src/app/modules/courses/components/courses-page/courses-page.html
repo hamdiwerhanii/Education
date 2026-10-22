@@ -5,14 +5,14 @@
     <div class="row justify-content-center">
       <div class="col-xl-7 col-lg-8">
         <div class="section-tittle text-center mb-40">
-          <h2>Our featured courses</h2>
+          <h2>Browse all courses</h2>
         </div>
       </div>
     </div>
 
     <form class="form-contact search-form mb-40" role="search" (ngSubmit)="submit()">
-      <label for="course-search" class="sr-only">Search courses by name</label>
-      <input id="course-search" class="form-control" type="search" name="q" maxlength="100" placeholder="Search courses by name" [ngModel]="search()" (ngModelChange)="search.set($event)" />
+      <label for="course-search" class="sr-only">Search courses</label>
+      <input id="course-search" class="form-control" type="search" name="q" maxlength="100" placeholder="Search by name or topic" [ngModel]="search()" (ngModelChange)="search.set($event)" />
       <button type="submit" class="btn">Search</button>
     </form>
 
@@ -35,7 +35,18 @@
         }
       </ul>
     } @else if (!isLoading() && !error()) {
-      <app-empty-state>No courses match your search.</app-empty-state>
+      <app-empty-state>
+        @if (q()) {
+          No courses about "{{ q() }}" yet.
+        } @else {
+          No courses have been published yet.
+        }
+      </app-empty-state>
+      @if (q()) {
+        <div class="text-center">
+          <button type="button" class="border-btn" (click)="clearSearch()">Clear search</button>
+        </div>
+      }
     }
 
     @if (isLoading()) {

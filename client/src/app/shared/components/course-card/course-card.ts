@@ -34,6 +34,31 @@ const COVER_COUNT = 6;
     </article>
   `,
   styles: `
+    :host {
+      display: block;
+      height: 100%;
+      padding-bottom: 30px;
+    }
+    .properties.mb-30 {
+      height: 100%;
+      margin-bottom: 0;
+    }
+    .properties__card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .properties__caption {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+    .properties__footer {
+      margin-top: auto;
+    }
+    .properties__footer p {
+      margin: 0;
+    }
     .course-card__description {
       display: -webkit-box;
       -webkit-line-clamp: 3;

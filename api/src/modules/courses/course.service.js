@@ -29,7 +29,10 @@ const populateForManagement = (query) =>
 
 export async function listCourses({ page, limit, q, teacherId }) {
   const filter = {};
-  if (q) filter.name = { $regex: escapeRegex(q), $options: "i" };
+  if (q) {
+    const pattern = { $regex: escapeRegex(q), $options: "i" };
+    filter.$or = [{ name: pattern }, { description: pattern }];
+  }
   if (teacherId) filter.teacher = teacherId;
 
   const [courses, total] = await Promise.all([
