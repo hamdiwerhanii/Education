@@ -25,6 +25,13 @@ describe("public course pages", () => {
     expect((await request(app).get("/api/courses?q=.*").expect(200)).body.total).toBe(0);
   });
 
+  it("also searches course descriptions", async () => {
+    const teacher = await createUser({ role: "teacher", speciality: "Maths" });
+    await createCourse(teacher, { name: "Algebra Basics", description: "Equations and functions for beginners." });
+
+    expect((await request(app).get("/api/courses?q=functions").expect(200)).body.total).toBe(1);
+  });
+
   it("returns 404 for unknown or invalid course ids", async () => {
     await request(app).get("/api/courses/not-an-id").expect(404);
     await request(app).get("/api/courses/507f1f77bcf86cd799439011").expect(404);

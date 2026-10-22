@@ -102,11 +102,11 @@
           </div>
 
           <div class="form-group mt-3">
-            <button type="submit" class="button button-contactForm boxed-btn mx-auto d-block w-100" [disabled]="isSubmitting()">
+            <button type="submit" class="btn d-block w-100" [disabled]="isSubmitting()">
               {{ isSubmitting() ? 'Creating account…' : 'Sign Up' }}
             </button>
           </div>
-          <p class="text-center">Already have an account? <a routerLink="/login">Log in</a></p>
+          <p class="text-center">Already have an account? <a class="text-link" routerLink="/login">Log in</a></p>
         </form>
       </div>
     </div>

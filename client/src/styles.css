@@ -2,11 +2,6 @@ body {
   overflow-x: hidden;
 }
 
-.row {
-  margin-right: -10px;
-  margin-left: -10px;
-}
-
 .skip-link {
   position: absolute;
   left: -9999px;
@@ -52,6 +47,22 @@ textarea:focus-visible {
   padding: 60px 0 100px;
 }
 
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.text-link {
+  color: #7364ff;
+  font-weight: 600;
+}
+
+.text-link:hover {
+  color: #5274ff;
+  text-decoration: underline;
+}
+
 .form-contact .form-control {
   border: 1px solid #d7d9e3;
   border-radius: 6px;
@@ -74,12 +85,20 @@ textarea:focus-visible {
   margin: 6px 0 0;
   color: #c62828;
   font-size: 14px;
+  line-height: 1.5;
 }
 
 .field-hint {
   margin: 6px 0 0;
   color: #6c757d;
   font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  .slider-area:not(.slider-area2) {
+    background-image: url("/assets/img/hero/hero2.png");
+  }
 }
 
 .status {

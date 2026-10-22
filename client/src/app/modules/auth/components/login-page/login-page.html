@@ -19,11 +19,11 @@
             <app-field-error [control]="form.controls.password" id="login-password-error" [show]="submitted()" />
           </div>
           <div class="form-group mt-3">
-            <button type="submit" class="button button-contactForm boxed-btn mx-auto d-block w-100" [disabled]="isSubmitting()">
+            <button type="submit" class="btn d-block w-100" [disabled]="isSubmitting()">
               {{ isSubmitting() ? 'Logging in…' : 'Login' }}
             </button>
           </div>
-          <p class="text-center">No account yet? <a routerLink="/sign-up/student">Sign up</a></p>
+          <p class="text-center">No account yet? <a class="text-link" routerLink="/sign-up/student">Sign up</a></p>
         </form>
       </div>
     </div>

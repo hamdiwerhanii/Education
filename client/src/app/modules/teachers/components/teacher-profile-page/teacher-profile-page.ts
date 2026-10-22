@@ -19,7 +19,7 @@ import { NotFoundPage } from '../../../not-found/components/not-found-page/not-f
       <app-not-found-page />
     } @else {
       <app-page-banner title="Teacher" />
-      <section class="section-padding40">
+      <section class="courses-area section-padding40">
         <div class="container">
           @if (error()) {
             <app-alert retryLabel="Try again" (retry)="load()">{{ error() }}</app-alert>

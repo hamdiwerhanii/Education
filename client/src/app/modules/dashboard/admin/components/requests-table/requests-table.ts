@@ -38,7 +38,7 @@ const requestKey = (r: EnrolmentRequest) => `${r.course.id}:${r.student.id}`;
                       {{ request.student.firstName }} {{ request.student.lastName }}
                     </span>
                   </td>
-                  <td><a [routerLink]="['/courses', request.course.id]">{{ request.course.name }}</a></td>
+                  <td><a class="text-link" [routerLink]="['/courses', request.course.id]">{{ request.course.name }}</a></td>
                   <td class="actions">
                     <button type="button" class="action-btn action-btn--success" [disabled]="busyKey() === key(request)" (click)="decide(request, true)">
                       Accept<span class="sr-only"> {{ request.student.firstName }} in {{ request.course.name }}</span>

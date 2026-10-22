@@ -22,7 +22,7 @@ import { CourseSummary, StudentCourse } from '../../../../../shared/models/cours
           <tbody>
             @for (course of courses(); track course.id) {
               <tr>
-                <td><a [routerLink]="['/courses', course.id]">{{ course.name }}</a></td>
+                <td><a class="text-link" [routerLink]="['/courses', course.id]">{{ course.name }}</a></td>
                 <td>{{ course.teacher.firstName }} {{ course.teacher.lastName }}</td>
                 <td>
                   @if (course.grade; as grade) {
@@ -45,7 +45,7 @@ import { CourseSummary, StudentCourse } from '../../../../../shared/models/cours
       <h3 class="pending-title">Waiting for approval</h3>
       <ul class="pending-list">
         @for (course of pending(); track course.id) {
-          <li><a [routerLink]="['/courses', course.id]">{{ course.name }}</a> <span class="badge-pill badge-pill--warning">Pending</span></li>
+          <li><a class="text-link" [routerLink]="['/courses', course.id]">{{ course.name }}</a> <span class="badge-pill badge-pill--warning">Pending</span></li>
         }
       </ul>
     }
@@ -60,10 +60,16 @@ import { CourseSummary, StudentCourse } from '../../../../../shared/models/cours
       font-size: 18px;
     }
     .pending-list {
-      padding-left: 18px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
     }
     .pending-list li {
-      margin-bottom: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
     }
   `,
 })
